@@ -1,16 +1,14 @@
-import { responseDataTypes } from "@/types/Plant";
-import type { Book } from "@/types/Book.types";
+import type { responseDataTypes } from "@/types/Response.types";
+import type { BookDataTypes } from "@/types/Book.types";
 
 export const FetchBooks = async (
   BASE: string,
-  UserId: string
-): Promise<Book> => {
-  return await fetch(BASE + "/plants", {
-    method: "POST",
+): Promise<BookDataTypes> => {
+  return await fetch(BASE + "/", {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ UserId: UserId }),
   })
     .then((response) => {
       return response.json();
@@ -19,21 +17,20 @@ export const FetchBooks = async (
       return payload.plants;
     })
     .catch((error) => {
-      return console.error("Error fetching plants:", error);
+      return console.error("Error fetching Books:", error);
     });
 };
 
 export const FetchBookDetails = (
   BASE: string,
-  plantId: string,
-  UserId: string
-): Promise<Book> => {
+  BookId: string,
+): Promise<BookDataTypes> => {
   return fetch(BASE + "/plants/plant", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ plantId: plantId, userId: UserId }),
+    body: JSON.stringify({ bookId: BookId}),
   })
     .then((response) => {
       //console.log(response);
@@ -51,13 +48,13 @@ export const FetchBookDetails = (
 export const AddBook = async (
   BASE: string,
   Values: {
-    id: string,
-    title: string,
-    YearPublished: number,
-
+    id: string;
+    title: string;
+    author: string
+    YearPublished: number;
   }
 ): Promise<responseDataTypes> => {
-  return await fetch(BASE + "/plants/add", {
+  return await fetch(BASE + "/books/add", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -129,7 +126,7 @@ export const DeletePlant = async (
 export const getFavourites = async (
   BASE: string,
   userId: string
-): Promise<Book> => {
+): Promise<BookDataTypes> => {
   return await fetch(BASE + "/plants/favourite", {
     method: "POST",
     headers: {
