@@ -1,0 +1,4 @@
+@rootURL = http://localhost:5210
+
+GET {{rootURL}}/api/books
+Accept: application/json
