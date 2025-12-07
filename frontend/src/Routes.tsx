@@ -1,16 +1,17 @@
-import React from 'react';
-import { Routes } from 'react-router-dom';
-const DashBoard = React.lazy(() => import('./routes/Dashboard'))
+import React, { Suspense } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+const DashBoard = React.lazy(() => import('./routes/Dashboard'));
 
 
-const Routes = () => {
+const AppRoutes = () => {
     const location = useLocation();
     return (
-        <Routes location={location} key={location.pathname}>
-            <Route path='/' element={<DashBoard />}></Route>
-
-        </Routes>
-    )
+        <Suspense fallback={null}>
+            <Routes location={location} key={location.pathname}>
+                <Route path='/' element={<DashBoard />}></Route>
+            </Routes>
+        </Suspense>
+    );
 }
 
-export default Routes
+export default AppRoutes

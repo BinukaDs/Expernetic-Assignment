@@ -1,8 +1,19 @@
-import { useState } from "react";
-import { Navbar } from "@/components/ui/Navbar"
+import { useState, useEffect } from "react";
 import { BooksTable } from "@/components/ui/BooksTable"
+import { FetchBooks } from "@/services/Books.service";
+
+const BASE = "http://localhost:5210/api/books";
 
 const Dashboard = () => {
+
+    const loadBooks = async () => {
+        const books = await FetchBooks(BASE);
+        console.log(books);
+    }
+
+    useEffect(() => {
+        loadBooks();
+    }, []);
 
     const [books, setBooks] = useState([
         { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", yearPublished: 1925 },
