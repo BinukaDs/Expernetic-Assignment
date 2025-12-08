@@ -1,9 +1,7 @@
 import type { responseDataTypes } from "@/types/Response.types";
 import type { BookDataTypes } from "@/types/Book.types";
 
-export const FetchBooks = async (
-  BASE: string,
-): Promise<BookDataTypes> => {
+export const FetchBooks = async (BASE: string): Promise<BookDataTypes> => {
   return await fetch(BASE + "/", {
     method: "GET",
     headers: {
@@ -14,7 +12,7 @@ export const FetchBooks = async (
       return response.json();
     })
     .then((payload) => {
-      return payload.plants;
+      return payload.books;
     })
     .catch((error) => {
       return console.error("Error fetching Books:", error);
@@ -23,14 +21,14 @@ export const FetchBooks = async (
 
 export const FetchBookDetails = (
   BASE: string,
-  BookId: string,
+  BookId: string
 ): Promise<BookDataTypes> => {
   return fetch(BASE + "/plants/plant", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ bookId: BookId}),
+    body: JSON.stringify({ bookId: BookId }),
   })
     .then((response) => {
       //console.log(response);
@@ -50,7 +48,7 @@ export const AddBook = async (
   Values: {
     id: string;
     title: string;
-    author: string
+    author: string;
     YearPublished: number;
   }
 ): Promise<responseDataTypes> => {

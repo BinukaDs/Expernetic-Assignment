@@ -4,12 +4,12 @@ import { Eye, Pencil, Trash } from "lucide-react"
 import { ViewBookModal } from "./ViewBookModal"
 import { EditBookModal } from "./EditBookModal"
 import { DeleteBookModal } from "./DeleteBookModal"
-import type { Book } from "@/types/Book.types"
+import type { BookDataTypes } from "@/types/Book.types"
 
-export function BooksTable({ books, setBooks }: { books: Book[], setBooks: (b: Book[]) => void }) {
-    const [viewBook, setViewBook] = useState<Book | null>(null)
-    const [editBook, setEditBook] = useState<Book | null>(null)
-    const [deleteBook, setDeleteBook] = useState<Book | null>(null)
+export function BooksTable({ books, setBooks }: { books: BookDataTypes[], setBooks: (b: BookDataTypes[]) => void }) {
+    const [viewBook, setViewBook] = useState<BookDataTypes | null>(null)
+    const [editBook, setEditBook] = useState<BookDataTypes | null>(null)
+    const [deleteBook, setDeleteBook] = useState<BookDataTypes | null>(null)
 
     return (
         <div className="bg-white rounded shadow p-6">
