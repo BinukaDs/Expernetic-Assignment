@@ -15,20 +15,15 @@ namespace Expernetic_Assignment.Controllers
         {
             _context = context;
         }
-
-            private static List<Book> books = new List<Book>
-            {
-                new Book(1, "The Great Gatsby", "1925", "F. Scott Fitzgerald"),
-                new Book(2, "To Kill a Mockingbird", "1960", "Harper Lee"),
-                new Book(3, "1984", "1949", "George Orwell")
-
-            };
         
         [HttpGet]
         public ActionResult<List<Book>> GetBooks()
         {
             var books = _context.Books.ToList(); 
-            return Ok(books);
+            return Ok(new
+            {
+                Books = books
+            });
         }
 
         [HttpGet("{id}")]
