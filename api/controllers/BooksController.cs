@@ -20,10 +20,7 @@ namespace Expernetic_Assignment.Controllers
         public ActionResult<List<Book>> GetBooks()
         {
             var books = _context.Books.ToList(); 
-            return Ok(new
-            {
-                Books = books
-            });
+            return Ok(books);
         }
 
         [HttpGet("{id}")]
@@ -46,11 +43,15 @@ namespace Expernetic_Assignment.Controllers
                 return BadRequest();
             } 
 
-            var doesExist = _context.Books.Any(book => book.Id == newBook.Id);
-            if(doesExist)
-            {
-                return Conflict("A book with the same ID already exists.");
-            }
+
+           var maxId = _context.Books.Any() ? _context.Books.Max(b => b.Id) : 0;
+           newBook.Id = maxId + 1;
+
+           var doesExist = _context.Books.Any(b => b.Title == newBook.Title && b.Author == newBook.Author);
+              if(doesExist)
+              {
+                return Conflict("A book with that Title and Author already exists.");
+              }
 
            
             _context.Books.Add(newBook);
@@ -65,10 +66,13 @@ namespace Expernetic_Assignment.Controllers
             if(Book == null)
             {
                 return NotFound();
+            } else if(updatedBook == null)
+            {
+                return BadRequest();
             }
 
             Book.Title = updatedBook.Title;
-            Book.PublishedYear = updatedBook.PublishedYear;
+            Book.Description = updatedBook.Description;
             Book.Author = updatedBook.Author;
             _context.SaveChanges();
 
