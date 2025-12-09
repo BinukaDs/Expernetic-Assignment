@@ -1,52 +1,135 @@
-import { useState } from "react"
-import { Button } from "./button"
-import { Eye, Pencil, Trash } from "lucide-react"
-import { ViewBookModal } from "./ViewBookModal"
-import { EditBookModal } from "./EditBookModal"
-import { DeleteBookModal } from "./DeleteBookModal"
-import type { Book } from "@/types/Book.types"
+import { useEffect, useState } from "react";
+import { Button } from "./button";
+import { Checkbox } from "./checkbox";
+import { Eye, Pencil, Trash, Plus } from "lucide-react";
+import { ViewBookModal } from "./ViewBookModal";
+import { EditBookModal } from "./EditBookModal";
+import TableCheckBox from "./TableCheckBox";
+import { DeleteBookModal } from "./DeleteBookModal";
+import type { BookDataTypes } from "@/types/Book.types";
+import { AddBook, DeleteBook, UpdateBook, DeleteMultipleBooks } from "@/services/Books.service";
+import { CreateBookModal } from "./CreateBookModal";
+import { toast } from "sonner";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./table";
 
-export function BooksTable({ books, setBooks }: { books: Book[], setBooks: (b: Book[]) => void }) {
-    const [viewBook, setViewBook] = useState<Book | null>(null)
-    const [editBook, setEditBook] = useState<Book | null>(null)
-    const [deleteBook, setDeleteBook] = useState<Book | null>(null)
+export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataTypes[], setBooks: (b: BookDataTypes[]) => void, loadBooks: () => void }) {
+    const [viewBook, setViewBook] = useState<BookDataTypes | null>(null);
+    const [editBook, setEditBook] = useState<BookDataTypes | null>(null);
+    const [deleteBook, setDeleteBook] = useState<BookDataTypes | null>(null);
+    const [createOpen, setCreateOpen] = useState(false);
+    const [multipleBooks, setmultipleBooks] = useState<BookDataTypes['id'][]>([]);
+
+    // Create Book
+    const handleCreate = async (newBook: BookDataTypes) => {
+        try {
+            const response = await AddBook("http://localhost:5210/api", newBook);
+            // console.log("Create response: ", response);
+            if (response.status === 201) {
+                setBooks([...books, newBook]);
+                loadBooks();
+                toast.success("New Book created.");
+            }
+        } catch (error) {
+            console.error("Error creating book: ", error);
+            toast.error("Failed to create Book.");
+        }
+    };
+
+    // Update Book
+    const handleUpdate = async (updated: BookDataTypes) => {
+        try {
+            const response = await UpdateBook("http://localhost:5210/api", updated);
+            // console.log("Update response: ", response);
+            if (response.status === 200) {
+                setBooks(books.map(b => b.id === updated.id ? updated : b));
+                loadBooks();
+                toast.success("Book updated.");
+            }
+        } catch (error) {
+            console.error("Error updating book: ", error);
+            toast.error("Failed to update Book.");
+        }
+    };
+
+    // Delete Book
+    const handleDelete = async (BookId: number) => {
+        try {
+            const response = await DeleteBook("http://localhost:5210/api", BookId);
+            if (response.status === 204) {
+                setBooks(books.filter(b => b.id !== BookId));
+                loadBooks();
+                toast.success("Book deleted.");
+            }
+        } catch (error) {
+            console.error("Error deleting book: ", error);
+            toast.error("Failed to delete Book.");
+        }
+    };
+
+    // handle Multiple Delete
+    const handleMultipleDelete = async () => {
+        try {
+            const response = await DeleteMultipleBooks("http://localhost:5210/api", multipleBooks);
+            if (response.status === 204) {
+                setBooks(books.filter(b => !multipleBooks.includes(b.id)));
+                loadBooks();
+                toast.success("Selected Books deleted.");
+            }
+        } catch (error) {
+            console.error("Error deleting multiple books: ", error);
+            toast.error("Failed to delete selected Books.");
+        }
+    };
 
     return (
-        <div className="bg-white rounded shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Books</h2>
-            <table className="min-w-full text-sm">
-                <thead>
-                    <tr className="border-b">
-                        <th className="py-2 px-4 text-left">Title</th>
-                        <th className="py-2 px-4 text-left">Author</th>
-                        <th className="py-2 px-4 text-left">Year</th>
-                        <th className="py-2 px-4 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div className="rounded w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-accent">Books</h2>
+                <div className="flex gap-x-2">
+                    <Button variant="default" size="sm" onClick={() => setCreateOpen(true)}>
+                        <Plus className="w-4 h-4 mr-1" /> Add Book
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleMultipleDelete()}><Trash className="w-4 h-4 text-red-500" /></Button>
+                </div>
+            </div>
+            <Table>
+                <TableHeader>
+                    <TableRow className="border-b bg-[#f0f4fc]">
+                        <TableHead className="py-2 text-left"></TableHead>
+                        <TableHead className="py-2 px-4 text-left">Title</TableHead>
+                        <TableHead className="py-2 px-4 text-left">Author</TableHead>
+                        <TableHead className="py-2 px-4 text-left">Description</TableHead>
+                        <TableHead className="py-2 px-4 text-center">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {books.map((book) => (
-                        <tr key={book.id} className="border-b hover:bg-gray-50">
-                            <td className="py-2 px-4">{book.title}</td>
-                            <td className="py-2 px-4">{book.author}</td>
-                            <td className="py-2 px-4">{book.yearPublished}</td>
-                            <td className="py-2 px-4 flex gap-2 justify-center">
+                        <TableRow key={book.id} className="border-b hover:bg-gray-50">
+                            <TableCell><TableCheckBox bookId={book.id} multipleBooks={multipleBooks} setmultipleBooks={setmultipleBooks} /></TableCell>
+                            <TableCell className="py-2 px-4">{book.title}</TableCell>
+                            <TableCell className="py-2 px-4">{book.author}</TableCell>
+                            <TableCell className="py-2 px-4 "><p className="truncate w-64">{book.description}</p></TableCell>
+                            <TableCell className="py-2 px-4 flex gap-2 justify-center">
                                 <Button variant="ghost" size="icon" onClick={() => setViewBook(book)}><Eye className="w-4 h-4" /></Button>
                                 <Button variant="ghost" size="icon" onClick={() => setEditBook(book)}><Pencil className="w-4 h-4" /></Button>
                                 <Button variant="ghost" size="icon" onClick={() => setDeleteBook(book)}><Trash className="w-4 h-4 text-red-500" /></Button>
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
+
+            {/* Modals for each feature */}
+            <CreateBookModal open={createOpen} onClose={() => setCreateOpen(false)} onCreate={handleCreate} />
             <ViewBookModal book={viewBook} onClose={() => setViewBook(null)} />
             <EditBookModal book={editBook} onClose={() => setEditBook(null)} onSave={(updated) => {
-                setBooks(books.map(b => b.id === updated.id ? updated : b))
-                setEditBook(null)
+                handleUpdate(updated);
+                setEditBook(null);
             }} />
             <DeleteBookModal book={deleteBook} onClose={() => setDeleteBook(null)} onDelete={() => {
-                setBooks(books.filter(b => b.id !== deleteBook.id))
-                setDeleteBook(null)
+                if (deleteBook && typeof deleteBook.id === "number") handleDelete(deleteBook.id);
+                setDeleteBook(null);
             }} />
         </div>
-    )
+    );
 }

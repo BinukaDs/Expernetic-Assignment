@@ -1,27 +1,33 @@
 import { useState, useEffect } from "react";
 import { BooksTable } from "@/components/ui/BooksTable"
 import { FetchBooks } from "@/services/Books.service";
-
+import type { BookDataTypes } from "@/types/Book.types";
+import { toast } from "sonner";
 const BASE = "http://localhost:5210/api/books";
 
-const Dashboard = () => {
+export function Dashboard() {
 
+    const [books, setBooks] = useState<BookDataTypes[]>([]);
     const loadBooks = async () => {
-        const books = await FetchBooks(BASE);
-        console.log(books);
+        try {
+            const data = await FetchBooks(BASE);
+            if (data) {
+                console.log("Books: ", data);
+                setBooks(data.books || []);
+            } else return
+        } catch (error) {
+            console.error("error loading books:", error);
+            toast.error("Error loading books.");
+        }
     }
 
     useEffect(() => {
-        loadBooks();
+        (async () => loadBooks())();
     }, []);
 
-    const [books, setBooks] = useState([
-        { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", yearPublished: 1925 },
-        { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", yearPublished: 1960 },
-        { id: 3, title: "1984", author: "George Orwell", yearPublished: 1949 },
-    ]);
+
     return (
-        <BooksTable books={books} setBooks={setBooks} />
+        <BooksTable books={books} setBooks={setBooks} loadBooks={loadBooks} />
     )
 }
 

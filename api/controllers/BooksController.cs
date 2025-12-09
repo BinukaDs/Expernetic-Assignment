@@ -15,14 +15,6 @@ namespace Expernetic_Assignment.Controllers
         {
             _context = context;
         }
-
-            private static List<Book> books = new List<Book>
-            {
-                new Book(1, "The Great Gatsby", "1925", "F. Scott Fitzgerald"),
-                new Book(2, "To Kill a Mockingbird", "1960", "Harper Lee"),
-                new Book(3, "1984", "1949", "George Orwell")
-
-            };
         
         [HttpGet]
         public ActionResult<List<Book>> GetBooks()
@@ -51,11 +43,15 @@ namespace Expernetic_Assignment.Controllers
                 return BadRequest();
             } 
 
-            var doesExist = _context.Books.Any(book => book.Id == newBook.Id);
-            if(doesExist)
-            {
-                return Conflict("A book with the same ID already exists.");
-            }
+
+           var maxId = _context.Books.Any() ? _context.Books.Max(b => b.Id) : 0;
+           newBook.Id = maxId + 1;
+
+           var doesExist = _context.Books.Any(b => b.Title == newBook.Title && b.Author == newBook.Author);
+              if(doesExist)
+              {
+                return Conflict("A book with that Title and Author already exists.");
+              }
 
            
             _context.Books.Add(newBook);
@@ -70,10 +66,13 @@ namespace Expernetic_Assignment.Controllers
             if(Book == null)
             {
                 return NotFound();
+            } else if(updatedBook == null)
+            {
+                return BadRequest();
             }
 
             Book.Title = updatedBook.Title;
-            Book.PublishedYear = updatedBook.PublishedYear;
+            Book.Description = updatedBook.Description;
             Book.Author = updatedBook.Author;
             _context.SaveChanges();
 
@@ -91,6 +90,20 @@ namespace Expernetic_Assignment.Controllers
             }
 
             _context.Books.Remove(book);
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpDelete("multiple")]
+        public ActionResult DeleteMultipleBooks(List<int> Ids)
+        {
+            var booksDeleting = _context.Books.Where(b => Ids.Contains(b.Id)).ToList();
+            if(booksDeleting.Count == 0)
+            {
+                return NotFound();
+            }
+
+            _context.Books.RemoveRange(booksDeleting);
             _context.SaveChanges();
             return NoContent();
         }
