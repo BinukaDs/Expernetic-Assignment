@@ -3,10 +3,11 @@ import { BooksTable } from "@/components/ui/BooksTable"
 import { FetchBooks } from "@/services/Books.service";
 import type { BookDataTypes } from "@/types/Book.types";
 import { toast } from "sonner";
-const BASE = "http://localhost:5210/api/books";
+import { useContext } from "react";
+import { BaseContext } from "@/context/BaseContext";
 
 export function Dashboard() {
-
+    const BASE = useContext(BaseContext);
     const [books, setBooks] = useState<BookDataTypes[]>([]);
     const loadBooks = async () => {
         try {
