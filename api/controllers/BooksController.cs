@@ -97,6 +97,11 @@ namespace Expernetic_Assignment.Controllers
         [HttpDelete("multiple")]
         public ActionResult DeleteMultipleBooks(List<int> Ids)
         {
+
+            if (Ids == null)
+            {
+                return BadRequest("No IDs provided.");
+            }
             var booksDeleting = _context.Books.Where(b => Ids.Contains(b.Id)).ToList();
             if(booksDeleting.Count == 0)
             {
