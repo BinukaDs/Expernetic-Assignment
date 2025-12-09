@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState, useContext } from "react";
 import { Button } from "./button";
-import { Checkbox } from "./checkbox";
 import { Eye, Pencil, Trash, Plus } from "lucide-react";
 import { ViewBookModal } from "./ViewBookModal";
 import { EditBookModal } from "./EditBookModal";
@@ -11,18 +10,21 @@ import { AddBook, DeleteBook, UpdateBook, DeleteMultipleBooks } from "@/services
 import { CreateBookModal } from "./CreateBookModal";
 import { toast } from "sonner";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./table";
+import { BaseContext } from "@/context/BaseContext";
 
 export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataTypes[], setBooks: (b: BookDataTypes[]) => void, loadBooks: () => void }) {
     const [viewBook, setViewBook] = useState<BookDataTypes | null>(null);
     const [editBook, setEditBook] = useState<BookDataTypes | null>(null);
     const [deleteBook, setDeleteBook] = useState<BookDataTypes | null>(null);
     const [createOpen, setCreateOpen] = useState(false);
-    const [multipleBooks, setmultipleBooks] = useState<BookDataTypes['id'][]>([]);
+    const [multipleBooks, setmultipleBooks] = useState<number[]>([]);
+    const BASE = useContext(BaseContext);
+
 
     // Create Book
     const handleCreate = async (newBook: BookDataTypes) => {
         try {
-            const response = await AddBook("http://localhost:5210/api", newBook);
+            const response = await AddBook(BASE, newBook);
             // console.log("Create response: ", response);
             if (response.status === 201) {
                 setBooks([...books, newBook]);
@@ -38,7 +40,7 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
     // Update Book
     const handleUpdate = async (updated: BookDataTypes) => {
         try {
-            const response = await UpdateBook("http://localhost:5210/api", updated);
+            const response = await UpdateBook(BASE, updated);
             // console.log("Update response: ", response);
             if (response.status === 200) {
                 setBooks(books.map(b => b.id === updated.id ? updated : b));
@@ -54,7 +56,7 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
     // Delete Book
     const handleDelete = async (BookId: number) => {
         try {
-            const response = await DeleteBook("http://localhost:5210/api", BookId);
+            const response = await DeleteBook(BASE, BookId);
             if (response.status === 204) {
                 setBooks(books.filter(b => b.id !== BookId));
                 loadBooks();
@@ -69,9 +71,9 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
     // handle Multiple Delete
     const handleMultipleDelete = async () => {
         try {
-            const response = await DeleteMultipleBooks("http://localhost:5210/api", multipleBooks);
+            const response = await DeleteMultipleBooks(BASE, multipleBooks);
             if (response.status === 204) {
-                setBooks(books.filter(b => !multipleBooks.includes(b.id)));
+                setBooks(books.filter(b => !multipleBooks.includes(b.id as number)));
                 loadBooks();
                 toast.success("Selected Books deleted.");
             }

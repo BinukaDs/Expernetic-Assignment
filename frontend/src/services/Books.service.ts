@@ -65,7 +65,7 @@ export const DeleteBook = async (
 export const DeleteMultipleBooks = async (
   BASE: string,
   Ids: BookDataTypes["id"][]
-): Promise<responseDataTypes | void> => {
+): Promise<responseDataTypes> => {
   return await fetch(BASE + "/books/multiple", {
     method: "DELETE",
     headers: {
