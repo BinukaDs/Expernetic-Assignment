@@ -1,9 +1,9 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./dialog"
-import type { Book } from "../../types/Book.types"
+import type { BookDataTypes } from "../../types/Book.types"
 import { Button } from "./button"
 
-export function DeleteBookModal({ book, onClose, onDelete }: { book: Book, onClose: () => void, onDelete: () => void }) {
+export function DeleteBookModal({ book, onClose, onDelete }: { book: BookDataTypes, onClose: () => void, onDelete: () => void }) {
     if (!book) return null
     return (
         <Dialog open={!!book} onOpenChange={onClose}>
