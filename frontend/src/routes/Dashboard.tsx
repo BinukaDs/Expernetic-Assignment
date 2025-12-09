@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BooksTable } from "@/components/ui/BooksTable"
 import { FetchBooks } from "@/services/Books.service";
 import type { BookDataTypes } from "@/types/Book.types";
+import { toast } from "sonner";
 const BASE = "http://localhost:5210/api/books";
 
 export function Dashboard() {
@@ -15,7 +16,8 @@ export function Dashboard() {
                 setBooks(data.books || []);
             } else return
         } catch (error) {
-            console.error(error)
+            console.error("error loading books:", error);
+            toast.error("Error loading books.");
         }
     }
 
@@ -25,7 +27,7 @@ export function Dashboard() {
 
 
     return (
-        <BooksTable books={books} setBooks={setBooks} loadBooks={loadBooks}/>
+        <BooksTable books={books} setBooks={setBooks} loadBooks={loadBooks} />
     )
 }
 

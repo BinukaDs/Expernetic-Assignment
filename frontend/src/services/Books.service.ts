@@ -9,14 +9,10 @@ export const FetchBooks = async (
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then(async (response) => {
-      const books = await response.json();
-      return { status: response.status, books: books };
-    })
-    .catch((error) => {
-      return console.error("Error fetching Books:", error);
-    });
+  }).then(async (response) => {
+    const books = await response.json();
+    return { status: response.status, books: books };
+  });
 };
 
 export const AddBook = async (
@@ -29,16 +25,11 @@ export const AddBook = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify(Values),
-  })
-    .then((response) => {
-      //console.log(response);
-      response.json();
-      return { status: response.status, response };
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      return error;
-    });
+  }).then((response) => {
+    //console.log(response);
+    response.json();
+    return { status: response.status, response };
+  });
 };
 
 export const UpdateBook = async (
@@ -51,15 +42,10 @@ export const UpdateBook = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify(Values),
-  })
-    .then((response) => {
-      response.json();
-      return { status: response.status, response };
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      return error;
-    });
+  }).then((response) => {
+    response.json();
+    return { status: response.status, response };
+  });
 };
 
 export const DeleteBook = async (
@@ -71,12 +57,22 @@ export const DeleteBook = async (
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then((response) => {
-      return { status: response.status };
-    })
-    .catch((error) => {
-      console.error("Error deleting book:", error);
-      return error;
-    });
+  }).then((response) => {
+    return { status: response.status };
+  });
+};
+
+export const DeleteMultipleBooks = async (
+  BASE: string,
+  Ids: BookDataTypes["id"][]
+): Promise<responseDataTypes | void> => {
+  return await fetch(BASE + "/books/multiple", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(Ids),
+  }).then((response) => {
+    return { status: response.status };
+  });
 };
