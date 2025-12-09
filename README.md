@@ -3,7 +3,7 @@
 
 ## Introduction
 
-This project was completed as an assignment for the Expernetic Software Engineering Full‑Stack Internship assessment. It showcases a simple library management system with a .NET 9 backend (SQLite) and a React (TypeScript) frontend.
+This project was completed as an assignment for the Expernetic Software Engineering Full‑Stack Internship assessment. It showcases a simple library management system with a .NET 10 backend (SQLite) and a React (TypeScript) frontend.
 
 ## Getting Started
 
