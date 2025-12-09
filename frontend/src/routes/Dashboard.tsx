@@ -12,7 +12,7 @@ export function Dashboard() {
             const data = await FetchBooks(BASE);
             if (data) {
                 console.log("Books: ", data);
-                setBooks(data.books);
+                setBooks(data.books || []);
             } else return
         } catch (error) {
             console.error(error)

@@ -37,13 +37,15 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
     const handleUpdate = async (updated: BookDataTypes) => {
         try {
             const response = await UpdateBook("http://localhost:5210/api", updated);
-            console.log("Update response: ", response);
+            // console.log("Update response: ", response);
             if (response.status === 200) {
                 setBooks(books.map(b => b.id === updated.id ? updated : b))
                 loadBooks();
+                toast.success("Book updated.");
             }
         } catch (error) {
             console.error("Error updating book: ", error);
+            toast.error("Failed to update Book.");
         }
     }
 
@@ -55,9 +57,11 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
             if (response.status === 204) {
                 setBooks(books.filter(b => b.id !== BookId))
                 loadBooks();
+                toast.success("Book deleted.");
             }
         } catch (error) {
             console.error("Error deleting book: ", error);
+            toast.error("Failed to delete Book.");
         }
     }
 
@@ -81,6 +85,7 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
                 <TableBody>
                     {books.map((book) => (
                         <TableRow key={book.id} className="border-b hover:bg-gray-50">
+                            <TableCell></TableCell>
                             <TableCell className="py-2 px-4">{book.title}</TableCell>
                             <TableCell className="py-2 px-4">{book.author}</TableCell>
                             <TableCell className="py-2 px-4 "><p className="truncate w-64">{book.description}</p></TableCell>
@@ -102,7 +107,7 @@ export function BooksTable({ books, setBooks, loadBooks }: { books: BookDataType
                 setEditBook(null)
             }} />
             <DeleteBookModal book={deleteBook} onClose={() => setDeleteBook(null)} onDelete={() => {
-                if (deleteBook) handleDelete(deleteBook.id);
+                if (deleteBook && typeof deleteBook.id === "number") handleDelete(deleteBook.id);
                 setDeleteBook(null)
             }} />
         </div>

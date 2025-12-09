@@ -5,7 +5,7 @@ import type { BookDataTypes } from "@/types/Book.types"
 import { toast } from "sonner"
 
 
-export function EditBookModal({ book, onClose, onSave }: { book: BookDataTypes, onClose: () => void, onSave: (b: BookDataTypes) => void }) {
+export function EditBookModal({ book, onClose, onSave }: { book: BookDataTypes | null, onClose: () => void, onSave: (b: BookDataTypes) => void }) {
     const [form, setForm] = useState<BookDataTypes>({ title: "", author: "", description: "" })
     useEffect(() => {
         (async () => {
