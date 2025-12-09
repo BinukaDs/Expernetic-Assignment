@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "./button"
 import type { BookDataTypes } from "@/types/Book.types"
 
-export function ViewBookModal({ book, onClose }: { book: BookDataTypes, onClose: () => void }) {
+export function ViewBookModal({ book, onClose }: { book: BookDataTypes | null, onClose: () => void }) {
     if (!book) return null
     return (
         <Dialog open={!!book} onOpenChange={onClose}>

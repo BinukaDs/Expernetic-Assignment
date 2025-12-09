@@ -93,6 +93,20 @@ namespace Expernetic_Assignment.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+
+        [HttpDelete("multiple")]
+        public ActionResult DeleteMultipleBooks(List<int> Ids)
+        {
+            var booksDeleting = _context.Books.Where(b => Ids.Contains(b.Id)).ToList();
+            if(booksDeleting.Count == 0)
+            {
+                return NotFound();
+            }
+
+            _context.Books.RemoveRange(booksDeleting);
+            _context.SaveChanges();
+            return NoContent();
+        }
         
     }
 }
