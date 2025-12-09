@@ -1,14 +1,14 @@
 import { BrowserRouter } from "react-router-dom";
-import { Navbar } from "@/components/ui/Navbar"
-import { Toaster } from "@/components/ui/sonner"
-
+import { Navbar } from "@/components/ui/Navbar";
+import { Toaster } from "@/components/ui/sonner";
+import { BaseContext } from "./context/BaseContext";
 import AppRoutes from "./Routes";
 
 
 
 function App() {
 
-
+  const BASE = "http://localhost:5210/api/books";
 
 
   return (
@@ -17,7 +17,7 @@ function App() {
       <main className="max-w-full mx-auto mt-10">
         <Toaster />
         <BrowserRouter>
-          <AppRoutes />
+          <BaseContext.Provider value={BASE}> <AppRoutes /></BaseContext.Provider>
         </BrowserRouter>
       </main>
     </div>
