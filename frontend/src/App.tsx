@@ -8,7 +8,7 @@ import AppRoutes from "./Routes";
 
 function App() {
 
-  const BASE = "http://localhost:5210/api/books";
+  const BASE = "http://localhost:5210/api";
 
 
   return (
