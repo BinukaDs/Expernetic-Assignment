@@ -4,7 +4,7 @@ import type { BookDataTypes } from "@/types/Book.types";
 export const FetchBooks = async (
   BASE: string
 ): Promise<responseDataTypes | void> => {
-  return await fetch(BASE + "/", {
+  return await fetch(BASE + "/books", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
